@@ -31,11 +31,11 @@ test('Amazon Orders', async ({ page }) => {
 });
 
 test('Pay Orders', async ({ page }) => {
-  // Go to Amazon
-  await page.goto('https://www.discover.com/');
+  // // Go to Amazon
+  // await page.goto('https://www.discover.com/');
 
-  // Login to Amazon Orders
-  await login_pay(page)  
+  // // Login to Amazon Orders
+  // await login_pay(page)  
 
 //   // Read parameters
 //   let parameters = await getParameters()
