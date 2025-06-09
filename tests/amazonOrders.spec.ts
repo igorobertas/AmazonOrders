@@ -31,9 +31,10 @@ test('Amazon Orders', async ({ page }) => {
 });
 
 test('Pay Orders', async ({ page }) => {
-  // // Go to Amazon
-  // await page.goto('https://www.discover.com/');
-
+  // Go to Amazon
+  // await page.goto('https://www.discover.com');
+  // await page.goto('https://www.discovercard.com/cardmembersvcs/loginlogout/app/ac_main?TYPE=33554433&REALMOID=06-0002361d-a8e6-1425-9d8f-5f27aad9306d&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=-SM-EHDGTgiKFBoJpguJbt8U7OlKqSNptavVvNicV5eFIroRwXzw3mKgSudzyHZxDm%2bKD2z0mHIpeX2IIMTizVmPVUHtyVE3%2fKQoBADqqvXwHyVWEVzPq0YGKb5%2fm6FXA2lP&TARGET=-SM-https%3a%2f%2fwww%2ediscovercard%2ecom%2fcardmembersvcs%2fstatements%2fapp%2fstmt');
+  // await page.goto('https://portal.discover.com/customersvcs/universalLogin/ac_main?link=%2Fcardmembersvcs%2Fepay%2Fapp%2FpaymentInfoInput')
   // // Login to Amazon Orders
   // await login_pay(page)  
 
@@ -64,7 +65,7 @@ async function login_amazon(page: Page) {
   if (existsSync(path)) {
 
     // Go to Orders
-    await expect(page.getByRole('link', { name: 'Your Account' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Your Account' })).toBeVisible({ timeout: 30_000 });
     await page.getByRole('link', { name: 'Your Account' }).click();
     await expect(page.getByRole('link', { name: 'Returns & Orders' })).toBeVisible();
     await page.getByRole('link', { name: 'Returns & Orders' }).click();
@@ -90,15 +91,26 @@ async function login_pay(page: Page) {
   let path = join(target, 'myFolder', 'login.json')
   if (existsSync(path)) {
     let loginData = JSON.parse(readFileSync(path, 'utf8'))
-    await expect(page.getByRole('menuitem', { name: 'Log In Opens modal dialog' })).toBeVisible();
-    await page.getByRole('menuitem', { name: 'Log In Opens modal dialog' }).click();
-    await expect(page.getByTestId('log-in--popup')).toBeVisible();
-    await expect(page.getByTestId('password-input--popup').getByTestId('dfs-react-ui__input')).toBeVisible();
-    await page.getByTestId('user-id-input--popup').getByTestId('dfs-react-ui__input').click();
-    await page.getByTestId('user-id-input--popup').getByTestId('dfs-react-ui__input').fill(loginData.pay_user);
-    await page.getByTestId('password-input--popup').getByTestId('dfs-react-ui__input').click();
-    await page.getByTestId('password-input--popup').getByTestId('dfs-react-ui__input').fill(loginData.pay_password);
-    await page.getByTestId('log-in--popup').click();
+    await expect(page.getByRole('textbox', { name: 'User ID' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Password' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Log In', exact: true })).toBeVisible();
+    await page.getByRole('textbox', { name: 'User ID' }).click();
+    await page.getByRole('textbox', { name: 'User ID' }).fill('iobertas');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('SerejaSerafim7$');
+    await page.getByRole('button', { name: 'Log In', exact: true }).click();
+    await page.getByText('Outdated browsers can expose').click();
+
+
+    await expect(page.getByTestId('user-id-input').getByTestId('dfs-react-ui__input')).toBeVisible();
+    await expect(page.getByTestId('password-input').getByTestId('dfs-react-ui__input')).toBeVisible();
+    await expect(page.getByTestId('log-in')).toBeVisible();
+    await page.getByTestId('user-id-input').getByTestId('dfs-react-ui__input').click();
+    await page.getByTestId('user-id-input').getByTestId('dfs-react-ui__input').fill('iobertas');
+    await page.getByTestId('password-input').getByTestId('dfs-react-ui__input').click();
+    await page.getByTestId('password-input').getByTestId('dfs-react-ui__input').fill('SerejaSerafim7$');
+    await page.getByTestId('log-in').click();
+    await page.getByTestId('log-in').click();
     
   }
 };
@@ -136,7 +148,7 @@ async function readPage(page: Page, fileContent: any, parameters: any) {
   let orderN = 'Order #'
 
   let l_box = `//div[@class='a-box-inner']`
-  await expect(page.locator(l_box).first()).toBeVisible();
+  await expect(page.locator(l_box).first()).toBeVisible({ timeout: 10_000 });
 
   let l_orderCards = `//li[@class='order-card__list']`
   let l_total = `${l_box}//span[text()='${total}']//..//..//div[@class='a-row']//span`
